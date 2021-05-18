@@ -15,6 +15,8 @@
 | tlo.epub   | 4,113 KB   | 1.28s        | 0.22s   | 5.8x    |
 | atk.epub   | 617,183 KB | 25.11s       | 18.76s  | 1.3x    |
 
+Note: Results for `ineptepub.py` do not include the time spent processing with `zipfix.py`, which needs to be run on certain ePUB files before they're able to be correctly decrypted. `goinept` is able to handle these files without any sort of preprocessing.
+
 ## Building CLI
 
 ```
