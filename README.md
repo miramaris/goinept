@@ -6,16 +6,20 @@
 ./goinept -input encrypted.epub -key adobekey.der -output decrypted.epub
 ```
 
+### Compression Level
+
+`goinept` offers nine levels of compression, with each higher level trading speed for compression efficiency. By default, `goinept` uses level 5. To disable compression, you can use `--level 0`.
+
 ## Benchmarks
 
-| Input file | File size  | ineptepub.py | goinept | Speedup |
-| ---------- | ---------- | ------------ | ------- | ------- |
-| tbd.epub   | 729 KB     | 0.81s        | 0.07s   | 11.6x   |
-| sha.epub   | 2,459 KB   | 1.16s        | 0.18s   | 6.4x    |
-| tlo.epub   | 4,113 KB   | 1.28s        | 0.22s   | 5.8x    |
-| atk.epub   | 617,183 KB | 25.11s       | 18.76s  | 1.3x    |
+| Input file | File size  | ineptepub.py | goinept\* | Speedup |
+| ---------- | ---------- | ------------ | --------- | ------- |
+| tbd.epub   | 729 KB     | 0.81s        | 0.05s     | 16.2x   |
+| sha.epub   | 2,459 KB   | 1.16s        | 0.08s     | 14.5x   |
+| tlo.epub   | 4,113 KB   | 1.28s        | 0.06s     | 21.3x   |
+| atk.epub   | 617,183 KB | 25.11s       | 3.87s     | 6.5x    |
 
-Note: Results for `ineptepub.py` do not include the time spent processing with `zipfix.py`, which needs to be run on certain ePUB files before they're able to be correctly decrypted. `goinept` is able to handle these files without any sort of preprocessing.
+\*`goinept` was run with the default compression level (5).
 
 ## Building CLI
 

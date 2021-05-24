@@ -13,6 +13,7 @@ func main() {
 	input := flag.String("input", "", "path to encrypted epub file")
 	key := flag.String("key", "", "path to .der decryption key")
 	output := flag.String("output", "", "path to desired output file")
+	level := flag.Int("level", -1, "desired compression level [0-9]")
 
 	flag.Parse()
 
@@ -31,8 +32,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	if (*level < -1 || *level > 9) {
+		fmt.Println("-level must be a number between 1 and 9 inclusive")
+	}
+
 	fmt.Printf("Decrypting %s using key at %s.\n", *input, *key)
-	goinept.DecryptEpub(*key, *input, *output)
+	goinept.DecryptEpub(*key, *input, *output, *level)
 
 	fmt.Printf("Wrote decrypted EPUB to %s.\n", *output)
 }

@@ -2,7 +2,6 @@ package goinept
 
 import (
 	"bytes"
-	"compress/flate"
 	"context"
 	"crypto/aes"
 	"crypto/cipher"
@@ -17,6 +16,7 @@ import (
 	"os"
 
 	"github.com/miramaris/goinept/internal/zip"
+	"github.com/klauspost/compress/flate"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -175,7 +175,7 @@ func determineFileName(f *zip.File) string {
 	return localName
 }
 
-func DecryptEpub(keyFilepath string, epubFilepath string, outputFilepath string) {
+func DecryptEpub(keyFilepath string, epubFilepath string, outputFilepath string, compressionLevel int) {
 	keyFileBytes, err := ioutil.ReadFile(keyFilepath)
 	if err != nil {
 		log.Fatal(err)
@@ -186,7 +186,7 @@ func DecryptEpub(keyFilepath string, epubFilepath string, outputFilepath string)
 		log.Fatal(err)
 	}
 
-	buf := DecryptEpubFromBytes(keyFileBytes, epubFileBytes)
+	buf := DecryptEpubFromBytes(keyFileBytes, epubFileBytes, compressionLevel)
 
 	o, err := os.OpenFile(outputFilepath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
 	if err != nil {
@@ -197,7 +197,7 @@ func DecryptEpub(keyFilepath string, epubFilepath string, outputFilepath string)
 	io.Copy(o, buf)
 }
 
-func DecryptEpubFromBytes(keyFile []byte, epubFile []byte) *bytes.Buffer {
+func DecryptEpubFromBytes(keyFile []byte, epubFile []byte, compressionLevel int) *bytes.Buffer {
 	privateKey, err := x509.ParsePKCS1PrivateKey(keyFile)
 	if err != nil {
 		log.Fatal(err)
@@ -272,6 +272,10 @@ func DecryptEpubFromBytes(keyFile []byte, epubFile []byte) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)
 	outf := zip.NewWriter(buf)
+
+	outf.RegisterCompressor(zip.Deflate, func(out io.Writer) (io.WriteCloser, error) {
+		return flate.NewWriter(out, compressionLevel)
+	})
 
 	mimetype := zipFiles["mimetype"]
 	newHeader := zip.FileHeader{

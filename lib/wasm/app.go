@@ -18,7 +18,7 @@ func decryptEpub(this js.Value, args []js.Value) interface{} {
 	epubFileBuffer := make([]byte, epubFileBytes.Get("length").Int())
 	js.CopyBytesToGo(epubFileBuffer, epubFileBytes)
 
-	outputBytes := goinept.DecryptEpubFromBytes(keyFileBuffer, epubFileBuffer)
+	outputBytes := goinept.DecryptEpubFromBytes(keyFileBuffer, epubFileBuffer, -1)
 
 	dst := js.Global().Get("Uint8Array").New(outputBytes.Len())
 	js.CopyBytesToJS(dst, outputBytes.Bytes())
